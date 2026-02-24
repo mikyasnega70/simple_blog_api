@@ -54,7 +54,7 @@ async def create_user(db:db_dependency, request:Request, newUser:UserCreate):
 @limiter.limit('30/minute')
 async def get_user(db:db_dependency, user:user_dependency, request:Request):
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='invalid token')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Unauthorized')
     
     user_model = db.query(Users).filter(Users.id == user.get('id')).first()
     if not user_model:
@@ -66,7 +66,7 @@ async def get_user(db:db_dependency, user:user_dependency, request:Request):
 @limiter.limit('30/minute')
 async def get_user_post(db:db_dependency, user:user_dependency, request:Request):
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='invalid token')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Unauthorized')
     
     user_model = db.scalars(select(Users).where(Users.id == user.get('id'))).first()
     if not user_model:
