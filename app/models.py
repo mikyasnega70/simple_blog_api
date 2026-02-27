@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy_utils import EmailType
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -15,6 +15,7 @@ class Users(Base):
 
     posts = relationship('Posts', back_populates='author', cascade='all, delete-orphan')
     comments = relationship('Comments', back_populates='user', cascade='all, delete-orphan') 
+    likes = relationship('Likes', back_populates='user', cascade='all, delete-orphan')
  
 class Posts(Base):
     __tablename__ = 'posts'
@@ -30,6 +31,7 @@ class Posts(Base):
 
     author = relationship('Users', back_populates='posts')
     comments = relationship('Comments', back_populates='post', cascade='all, delete-orphan')
+    likes = relationship('Likes', back_populates='post', cascade='all, delete-orphan')
 
 class Comments(Base):
     __tablename__ = 'comments'
@@ -42,3 +44,15 @@ class Comments(Base):
 
     user = relationship('Users', back_populates='comments')
     post = relationship('Posts', back_populates='comments')
+
+class Likes(Base):
+    __tablename__='likes'
+
+    id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, ForeignKey('posts.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    post = relationship('Posts', back_populates='likes')
+    user = relationship('Users', back_populates='likes')
+
+    __table_args__ = (UniqueConstraint('user_id', 'post_id', name='unique_user_post_like'),)
