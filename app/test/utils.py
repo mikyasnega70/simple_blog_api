@@ -57,5 +57,20 @@ def test_post():
         conn.execute(text('delete from posts;'))
         conn.commit()
 
+@pytest.fixture
+def test_comment():
+    comment = Comments(
+        content='This is a test comment.',
+        user_id=1,
+        post_id=1
+    )
+    db = Testsessionlocal()
+    db.add(comment)
+    db.commit()
+    yield comment
+    with engine.connect() as conn:
+        conn.execute(text('delete from comments;'))
+        conn.commit()
+
 
 

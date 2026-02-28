@@ -31,7 +31,35 @@ def test_get_posts(test_post):
         }]
     }
 
+def test_get_post(test_user, test_post, test_comment):
+    response = client.get('/posts/test-post-1')
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {
+        'id': 1,
+        'title': 'Test Post',
+        'content': 'This is a test post.',
+        'slug': 'test-post-1',
+        'author':{
+            'id': 1,
+            'username': 'testuser'
+        },
+        'comments':[
+            {
+                'id': 1,
+                'content': 'This is a test comment.',
+                'user': {
+                    'id': 1,
+                    'username': 'testuser'
+                }
+            }
+        ]
+        
+    }
 
+def test_get_post_invalid(test_post):
+    response = client.get('/posts/test-post-2')
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()['detail'] == 'Post not found'
         
     
 
